@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Calculator - Agrolink</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .reset-btn {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .result-box {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .result-unit {
+            color: #999;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .recommendations {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .recommendations h3 {
+            color: #2e7d32;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .recommendations li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            color: #999;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥗 Protein Calculator</h1>
+        <p class="subtitle">Calculate daily protein requirements based on your details</p>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('daily')">Daily Needs</button>
+            <button class="tab-button" onclick="switchTab('food')">Food Protein</button>
+        </div>
+
+        <!-- Daily Protein Tab -->
+        <div id="daily" class="tab-content active">
+            <div class="info-box">
+                📌 Protein needs vary based on activity level. RDA is 0.8g/kg, but athletes may need 1.2-2.0g/kg.
+            </div>
+
+            <div class="input-group">
+                <label for="weight">Body Weight *</label>
+                <input type="number" id="weight" placeholder="Enter weight (kg)" min="0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label for="activity">Activity Level *</label>
+                <select id="activity">
+                    <option value="">Select activity level</option>
+                    <option value="1.2">Sedentary (little or no exercise)</option>
+                    <option value="1.375">Lightly active (1-3 days/week)</option>
+                    <option value="1.55">Moderately active (3-5 days/week)</option>
+                    <option value="1.725">Very active (6-7 days/week)</option>
+                    <option value="1.9">Extremely active (professional athlete)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="goal">Fitness Goal *</label>
+                <select id="goal">
+                    <option value="">Select your goal</option>
+                    <option value="0.8">General health (0.8g/kg)</option>
+                    <option value="1.2">Build muscle (1.2g/kg)</option>
+                    <option value="1.6">Heavy training (1.6g/kg)</option>
+                    <option value="2.0">Bodybuilding (2.0g/kg)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="calculate-btn" onclick="calculateDailyProtein()">Calculate</button>
+                <button class="reset-btn" onclick="resetDaily()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Food Protein Tab -->
+        <div id="food" class="tab-content">
+            <div class="info-box">
+                📌 Check protein content in common foods and calculate total intake for a meal.
+            </div>
+
+            <div class="input-group">
+                <label for="foodType">Select Food *</label>
+                <select id="foodType" onchange="updateProteinContent()">
+                    <option value="">Choose a food item</option>
+                    <option value="chicken">Chicken Breast (per 100g: 31g protein)</option>
+                    <option value="beef">Beef (per 100g: 26g protein)</option>
+                    <option value="fish">Fish/Salmon (per 100g: 25g protein)</option>
+                    <option value="eggs">Eggs (per 100g: 13g protein)</option>
+                    <option value="milk">Milk (per 100ml: 3.2g protein)</option>
+                    <option value="yogurt">Yogurt (per 100g: 3.5g protein)</option>
+                    <option value="tofu">Tofu (per 100g: 8g protein)</option>
+                    <option value="lentils">Lentils (per 100g: 9g protein)</option>
+                    <option value="beans">Beans (per 100g: 8g protein)</option>
+                    <option value="almonds">Almonds (per 100g: 21g protein)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="foodAmount">Amount *</label>
+                <input type="number" id="foodAmount" placeholder="Enter amount (grams or ml)" min="0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label for="proteinPerUnit">Protein Content (per 100g/ml)</label>
+                <input type="number" id="proteinPerUnit" placeholder="Auto-filled" readonly style="background: #f5f5f5;">
+            </div>
+
+            <div class="button-group">
+                <button class="calculate-btn" onclick="calculateFoodProtein()">Calculate</button>
+                <button class="reset-btn" onclick="resetFood()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="result-box" id="resultBox">
+            <h2 style="color: #333; margin-bottom: 20px;">📊 Results</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const proteinContent = {
+            chicken: 31,
+            beef: 26,
+            fish: 25,
+            eggs: 13,
+            milk: 3.2,
+            yogurt: 3.5,
+            tofu: 8,
+            lentils: 9,
+            beans: 8,
+            almonds: 21
+        };
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateProteinContent() {
+            const foodType = document.getElementById('foodType').value;
+            document.getElementById('proteinPerUnit').value = proteinContent[foodType] || '';
+        }
+
+        function calculateDailyProtein() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = parseFloat(document.getElementById('goal').value);
+
+            if (!weight || !activity || !goal) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (weight <= 0) {
+                alert('Weight must be greater than 0');
+                return;
+            }
+
+            const dailyProtein = weight * goal;
+            const perMeal = (dailyProtein / 3).toFixed(1);
+
+            const result = `
+                <div class="result-item">
+                    <div class="result-label">Daily Protein Requirement</div>
+                    <div>
+                        <span class="result-value">${dailyProtein.toFixed(1)}</span>
+                        <span class="result-unit">grams per day</span>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Per Meal (3 meals/day)</div>
+                    <div>
+                        <span class="result-value">${perMeal}</span>
+                        <span class="result-unit">grams per meal</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h3>💡 Recommendations</h3>
+                    <ul>
+                        <li>Spread protein intake throughout the day</li>
+                        <li>Include a variety of protein sources</li>
+                        <li>Pair with complex carbs and healthy fats</li>
+                        <li>Stay hydrated - drink plenty of water</li>
+                        <li>Adjust based on your results and how you feel</li>
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('resultContent').innerHTML = result;
+            document.getElementById('resultBox').classList.add('show');
+        }
+
+        function calculateFoodProtein() {
+            const foodType = document.getElementById('foodType').value;
+            const amount = parseFloat(document.getElementById('foodAmount').value);
+            const proteinPer100 = parseFloat(document.getElementById('proteinPerUnit').value);
+
+            if (!foodType || !amount || !proteinPer100) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (amount <= 0) {
+                alert('Amount must be greater than 0');
+                return;
+            }
+
+            const totalProtein = (amount * proteinPer100 / 100).toFixed(1);
+            const foodLabel = document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text.split('(')[0].trim();
+
+            const result = `
+                <div class="result-item">
+                    <div class="result-label">${foodLabel} - ${amount}g</div>
+                    <div>
+                        <span class="result-value">${totalProtein}</span>
+                        <span class="result-unit">grams of protein</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h3>💡 Serving Tips</h3>
+                    <ul>
+                        <li>This serving provides ${totalProtein}g of protein</li>
+                        <li>Serving size depends on your daily protein goal</li>
+                        <li>Mix with vegetables and grains for balanced meals</li>
+                        <li>Consider meal prep for consistency</li>
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('resultContent').innerHTML = result;
+            document.getElementById('resultBox').classList.add('show');
+        }
+
+        function resetDaily() {
+            document.getElementById('weight').value = '';
+            document.getElementById('activity').value = '';
+            document.getElementById('goal').value = '';
+            document.getElementById('resultBox').classList.remove('show');
+        }
+
+        function resetFood() {
+            document.getElementById('foodType').value = '';
+            document.getElementById('foodAmount').value = '';
+            document.getElementById('proteinPerUnit').value = '';
+            document.getElementById('resultBox').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
