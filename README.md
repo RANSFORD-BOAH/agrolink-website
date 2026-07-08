@@ -1,1 +1,1 @@
-# agrolink-website
+<div> <strong>Nutritional Insight:</strong> While 2 eggs provide significant daily nutrients, notice the cholesterol bar. Historically, dietary cholesterol was strictly limited, but modern research shows that for ~75% of people, <em>liver autoregulation</em> compensates for dietary intake, meaning blood (serum) cholesterol levels remain stable despite higher dietary consumption. </div>
