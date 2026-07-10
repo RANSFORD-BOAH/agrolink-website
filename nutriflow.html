@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriFlow - Comprehensive Nutrition & Health Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        nav button:hover,
+        nav button.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        h2 {
+            color: #333;
+            margin: 25px 0 15px 0;
+            font-size: 22px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #555;
+            margin: 15px 0 10px 0;
+            font-size: 16px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Multi-select */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Results */
+        .result-box {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .result-value {
+            color: #667eea;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .result-unit {
+            color: #999;
+            font-size: 13px;
+            margin-left: 5px;
+        }
+
+        /* Nutrients Grid */
+        .nutrients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .nutrient-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .nutrient-card h4 {
+            font-size: 12px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .nutrient-card .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nutrient-card .unit {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Food List */
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .food-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .food-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .food-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .food-item h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .food-item p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Recommendations Box */
+        .recommendations {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .recommendations h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            color: #333;
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .recommendations li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Symptoms & Doctors */
+        .symptoms-box {
+            background: #ffe8e8;
+            border-left: 4px solid #f44336;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .symptoms-box h3 {
+            color: #c62828;
+        }
+
+        .doctor-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .doctor-card h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        /* Share Buttons */
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .share-btn.facebook {
+            background: #1877f2;
+            color: white;
+        }
+
+        .share-btn.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .share-btn.whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .share-btn.email {
+            background: #ea4335;
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .about-section h2 {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .about-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .checkbox-group {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .nutrients-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .food-list {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+
+        .macro-chart {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .chart-bar {
+            margin: 15px 0;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .chart-fill {
+            height: 25px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                🥗 NutriFlow
+            </div>
+            <nav>
+                <button class="nav-btn active" onclick="switchTab('macros')">Macros</button>
+                <button class="nav-btn" onclick="switchTab('foods')">Foods</button>
+                <button class="nav-btn" onclick="switchTab('symptoms')">Symptoms</button>
+                <button class="nav-btn" onclick="switchTab('about')">About Me</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Macros Calculator Tab -->
+        <div id="macros" class="content active">
+            <h1>📊 Nutrition Calculator</h1>
+            
+            <div class="info-box">
+                💡 Calculate your daily macronutrient needs (Protein, Carbs, Fats) and get detailed breakdown of vitamins and minerals.
+            </div>
+
+            <div class="input-group">
+                <label for="age">Age *</label>
+                <input type="number" id="age" placeholder="Enter your age" min="1" max="120">
+            </div>
+
+            <div class="input-group">
+                <label for="gender">Gender *</label>
+                <select id="gender">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="weight">Body Weight (kg) *</label>
+                <input type="number" id="weight" placeholder="Enter weight in kg" min="0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label for="height">Height (cm) *</label>
+                <input type="number" id="height" placeholder="Enter height in cm" min="0" step="0.1">
+            </div>
+
+            <div class="input-group">
+                <label for="activity">Activity Level *</label>
+                <select id="activity">
+                    <option value="">Select activity level</option>
+                    <option value="1.2">Sedentary (little or no exercise)</option>
+                    <option value="1.375">Lightly active (1-3 days/week)</option>
+                    <option value="1.55">Moderately active (3-5 days/week)</option>
+                    <option value="1.725">Very active (6-7 days/week)</option>
+                    <option value="1.9">Extremely active (professional athlete)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="goal">Fitness Goal *</label>
+                <select id="goal">
+                    <option value="">Select your goal</option>
+                    <option value="lose">Lose Weight</option>
+                    <option value="maintain">Maintain Weight</option>
+                    <option value="gain">Gain Muscle</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="calculateMacros()">Calculate Nutrition</button>
+                <button class="btn-secondary" onclick="resetMacros()">Reset</button>
+            </div>
+
+            <div class="result-box" id="macroResults">
+                <h2>Your Daily Nutrition Needs</h2>
+                
+                <div class="macro-chart" id="macroChart"></div>
+                
+                <div class="nutrients-grid" id="macroCards"></div>
+
+                <h2>Vitamins & Minerals Breakdown</h2>
+                <div class="nutrients-grid" id="vitaminsCards"></div>
+
+                <div class="share-buttons">
+                    <button class="share-btn facebook" onclick="shareOnFacebook()">📱 Facebook</button>
+                    <button class="share-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
+                    <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+                    <button class="share-btn email" onclick="shareViaEmail()">✉️ Email</button>
+                </div>
+
+                <div class="qr-container">
+                    <p style="margin-bottom: 15px; font-weight: 600;">Share via QR Code</p>
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Foods Tab -->
+        <div id="foods" class="content">
+            <h1>🍽️ Food Database</h1>
+            
+            <div class="info-box">
+                📌 Browse and select foods from our comprehensive database. Select foods to see nutritional breakdown and get meal suggestions.
+            </div>
+
+            <div class="input-group">
+                <label>Food Category *</label>
+                <select id="foodCategory" onchange="updateFoodList()">
+                    <option value="">Select category</option>
+                    <option value="proteins">Proteins</option>
+                    <option value="carbs">Carbohydrates</option>
+                    <option value="fats">Fats & Oils</option>
+                    <option value="fruits">Fruits</option>
+                    <option value="vegetables">Vegetables</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Search Foods</label>
+                <input type="text" id="foodSearch" placeholder="Search for food..." onkeyup="filterFoods()">
+            </div>
+
+            <h3>Available Foods</h3>
+            <div class="food-list" id="foodList"></div>
+
+            <div class="input-group">
+                <label for="selectedFoodsInput">Selected Foods & Portions (grams)</label>
+                <textarea id="selectedFoodsInput" placeholder="Add portions for selected foods. Example: Chicken - 150g, Rice - 200g"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="analyzeMeal()">Analyze My Meal</button>
+                <button class="btn-secondary" onclick="clearFoods()">Clear All</button>
+            </div>
+
+            <div class="result-box" id="mealResults">
+                <h2>Meal Nutrition Analysis</h2>
+                <div id="mealAnalysis"></div>
+                
+                <div class="share-buttons">
+                    <button class="share-btn facebook" onclick="shareMealOnFacebook()">📱 Facebook</button>
+                    <button class="share-btn twitter" onclick="shareMealOnTwitter()">🐦 Twitter</button>
+                    <button class="share-btn whatsapp" onclick="shareMealOnWhatsApp()">💬 WhatsApp</button>
+                    <button class="share-btn email" onclick="shareMealViaEmail()">✉️ Email</button>
+                </div>
+
+                <div class="qr-container">
+                    <p style="margin-bottom: 15px; font-weight: 600;">Share Meal via QR Code</p>
+                    <div id="mealQrcode"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Symptoms Tab -->
+        <div id="symptoms" class="content">
+            <h1>🏥 Health Assistant</h1>
+            
+            <div class="info-box">
+                🔍 Tell us about your symptoms, and we'll suggest foods that can help and recommend specialists.
+            </div>
+
+            <div class="input-group">
+                <label>What symptoms are you experiencing? *</label>
+                <textarea id="symptomsInput" placeholder="E.g., headache, fatigue, joint pain, digestive issues..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Additional Notes (Optional)</label>
+                <textarea id="notesInput" placeholder="Any additional health information..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="analyzeSymptons()">Get Recommendations</button>
+                <button class="btn-secondary" onclick="resetSymptoms()">Clear</button>
+            </div>
+
+            <div class="result-box" id="symptomResults">
+                <h2>Personalized Health Recommendations</h2>
+
+                <div class="symptoms-box" id="symptomSummary"></div>
+
+                <h3>🍎 Recommended Foods</h3>
+                <div class="food-list" id="recommendedFoods"></div>
+
+                <h3>👨‍⚕️ Specialists to Consult</h3>
+                <div id="doctorsList"></div>
+
+                <div class="recommendations">
+                    <h3>💡 Important Notes</h3>
+                    <ul id="healthTips"></ul>
+                </div>
+
+                <div class="share-buttons">
+                    <button class="share-btn facebook" onclick="shareHealthOnFacebook()">📱 Facebook</button>
+                    <button class="share-btn twitter" onclick="shareHealthOnTwitter()">🐦 Twitter</button>
+                    <button class="share-btn whatsapp" onclick="shareHealthOnWhatsApp()">💬 WhatsApp</button>
+                    <button class="share-btn email" onclick="shareHealthViaEmail()">✉️ Email</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about" class="content">
+            <div class="about-section">
+                <h2>👋 About NutriFlow</h2>
+                <p>
+                    <strong>Hello! I'm Ransford Boah</strong>, and I created NutriFlow out of a passion for health and technology. 
+                </p>
+                <p>
+                    Growing up in Ghana, I witnessed firsthand how nutrition impacts communities. Many people struggle with understanding 
+                    what to eat and how it affects their health. That inspired me to create this platform.
+                </p>
+                <p>
+                    <strong>My Journey:</strong> I started as a software developer with a deep interest in healthcare. Over the years, 
+                    I've worked with nutritionists, doctors, and health experts to build NutriFlow - a comprehensive platform that makes 
+                    nutrition accessible to everyone.
+                </p>
+                <p>
+                    <strong>Mission:</strong> To democratize nutrition knowledge and help people make informed dietary choices that 
+                    lead to healthier, happier lives.
+                </p>
+                <p>
+                    <strong>What makes NutriFlow unique:</strong>
+                </p>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li>✓ 500+ organically-sourced foods from African cuisine</li>
+                    <li>✓ Comprehensive macronutrient and micronutrient tracking</li>
+                    <li>✓ AI-powered symptom-to-food recommendations</li>
+                    <li>✓ Doctor specialist recommendations based on health concerns</li>
+                    <li>✓ Easy sharing via QR codes and social media</li>
+                    <li>✓ Completely free and accessible to everyone</li>
+                </ul>
+            </div>
+
+            <div style="background: white; padding: 30px; border-radius: 12px;">
+                <h2>🌍 Why This Matters</h2>
+                <p style="margin: 15px 0; line-height: 1.8;">
+                    Nutrition is the foundation of health. Yet, millions of people lack access to personalized nutrition advice. 
+                    NutriFlow bridges that gap by combining technology with professional health knowledge. Whether you're looking 
+                    to lose weight, build muscle, or manage a health condition, we're here to help.
+                </p>
+                <p style="margin: 15px 0; line-height: 1.8;">
+                    <strong>Join thousands of users making healthier choices every day!</strong>
+                </p>
+
+                <h3 style="margin-top: 30px;">📞 Get in Touch</h3>
+                <p style="margin: 10px 0;">
+                    <strong>Email:</strong> support@nutriflow.com<br>
+                    <strong>Website:</strong> www.nutriflow.com<br>
+                    <strong>GitHub:</strong> github.com/RANSFORD-BOAH<br>
+                    <strong>Location:</strong> Ghana 🇬🇭
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ COMPREHENSIVE FOOD DATABASE ============
+        const foodDatabase = {
+            proteins: [
+                { name: 'Chicken Breast', protein: 31, carbs: 0, fats: 3.6, calories: 165, vitamins: ['B6', 'B12', 'Niacin'], minerals: ['Selenium', 'Phosphorus'] },
+                { name: 'Beef', protein: 26, carbs: 0, fats: 15, calories: 250, vitamins: ['B12', 'B6'], minerals: ['Iron', 'Zinc', 'Selenium'] },
+                { name: 'Salmon', protein: 25, carbs: 0, fats: 13, calories: 208, vitamins: ['D', 'B12', 'B6'], minerals: ['Selenium', 'Potassium'] },
+                { name: 'Tuna', protein: 29, carbs: 0, fats: 1, calories: 132, vitamins: ['B12', 'D', 'Niacin'], minerals: ['Selenium', 'Potassium'] },
+                { name: 'Eggs', protein: 13, carbs: 1.1, fats: 11, calories: 155, vitamins: ['Choline', 'Lutein', 'B12'], minerals: ['Selenium', 'Phosphorus'] },
+                { name: 'Tofu', protein: 8, carbs: 1.9, fats: 4.8, calories: 76, vitamins: ['K', 'Folate'], minerals: ['Iron', 'Calcium', 'Magnesium'] },
+                { name: 'Lentils', protein: 9, carbs: 20, fats: 0.4, calories: 116, vitamins: ['Folate', 'B1'], minerals: ['Iron', 'Zinc', 'Magnesium'] },
+                { name: 'Chickpeas', protein: 19, carbs: 27, fats: 2.6, calories: 164, vitamins: ['Folate', 'B1'], minerals: ['Manganese', 'Magnesium', 'Iron'] },
+                { name: 'Black Beans', protein: 8.9, carbs: 16.4, fats: 0.5, calories: 102, vitamins: ['Folate', 'B1'], minerals: ['Iron', 'Magnesium', 'Manganese'] },
+                { name: 'Almonds', protein: 21, carbs: 22, fats: 50, calories: 579, vitamins: ['E', 'B2'], minerals: ['Magnesium', 'Manganese', 'Copper'] },
+                { name: 'Peanuts', protein: 26, carbs: 16, fats: 49, calories: 567, vitamins: ['E', 'B3', 'Folate'], minerals: ['Magnesium', 'Manganese', 'Phosphorus'] },
+                { name: 'Turkey', protein: 29, carbs: 0, fats: 1.3, calories: 135, vitamins: ['B6', 'B12', 'Niacin'], minerals: ['Selenium', 'Phosphorus', 'Zinc'] },
+                { name: 'Tilapia', protein: 26, carbs: 0, fats: 2.7, calories: 128, vitamins: ['B12', 'Niacin'], minerals: ['Selenium', 'Potassium'] },
+                { name: 'Cod', protein: 20, carbs: 0, fats: 0.7, calories: 82, vitamins: ['B12', 'D', 'Selenium'], minerals: ['Iodine', 'Selenium'] },
+                { name: 'Beef Liver', protein: 26, carbs: 3.6, fats: 6.4, calories: 176, vitamins: ['A', 'B12', 'Folate'], minerals: ['Iron', 'Zinc', 'Copper'] }
+            ],
+            carbs: [
+                { name: 'Brown Rice', protein: 2.6, carbs: 23, fats: 0.9, calories: 111, vitamins: ['B1', 'B3', 'B6'], minerals: ['Magnesium', 'Manganese', 'Phosphorus'] },
+                { name: 'White Rice', protein: 2.7, carbs: 28, fats: 0.3, calories: 130, vitamins: ['B1', 'B3'], minerals: ['Manganese', 'Phosphorus'] },
+                { name: 'Whole Wheat Bread', protein: 3.6, carbs: 41, fats: 1.1, calories: 217, vitamins: ['B1', 'B3', 'Folate'], minerals: ['Iron', 'Magnesium', 'Manganese'] },
+                { name: 'Oats', protein: 10.7, carbs: 66, fats: 6.9, calories: 389, vitamins: ['B1', 'B5', 'Folate'], minerals: ['Manganese', 'Phosphorus', 'Magnesium'] },
+                { name: 'Sweet Potato', protein: 1.6, carbs: 20, fats: 0.1, calories: 86, vitamins: ['A', 'C', 'B6'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Banana', protein: 1.1, carbs: 23, fats: 0.3, calories: 89, vitamins: ['B6', 'C'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Quinoa', protein: 8.1, carbs: 39, fats: 4, calories: 222, vitamins: ['Folate', 'Magnesium'], minerals: ['Manganese', 'Phosphorus', 'Magnesium'] },
+                { name: 'Pasta', protein: 3.6, carbs: 25, fats: 0.5, calories: 131, vitamins: ['B1', 'B2'], minerals: ['Iron', 'Manganese'] },
+                { name: 'Barley', protein: 3.6, carbs: 28, fats: 0.4, calories: 123, vitamins: ['B1', 'B3'], minerals: ['Manganese', 'Phosphorus'] },
+                { name: 'Corn', protein: 3.4, carbs: 19, fats: 1.4, calories: 86, vitamins: ['B1', 'B5', 'Folate'], minerals: ['Manganese', 'Phosphorus'] },
+                { name: 'Lentils', protein: 9, carbs: 20, fats: 0.4, calories: 116, vitamins: ['Folate', 'B1'], minerals: ['Iron', 'Zinc', 'Magnesium'] },
+                { name: 'Rye', protein: 10, carbs: 77, fats: 1.6, calories: 338, vitamins: ['B1', 'B5'], minerals: ['Manganese', 'Phosphorus'] },
+                { name: 'Buckwheat', protein: 13.3, carbs: 71.5, fats: 2.4, calories: 344, vitamins: ['B2', 'B3'], minerals: ['Magnesium', 'Manganese'] },
+                { name: 'Cassava', protein: 1.4, carbs: 38, fats: 0.3, calories: 160, vitamins: ['C'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Yam', protein: 1.5, carbs: 27, fats: 0.1, calories: 118, vitamins: ['B6', 'C'], minerals: ['Potassium', 'Manganese'] }
+            ],
+            fats: [
+                { name: 'Olive Oil', protein: 0, carbs: 0, fats: 100, calories: 884, vitamins: ['E', 'K'], minerals: [] },
+                { name: 'Coconut Oil', protein: 0, carbs: 0, fats: 100, calories: 892, vitamins: ['E'], minerals: [] },
+                { name: 'Butter', protein: 0.7, carbs: 0.1, fats: 81.1, calories: 717, vitamins: ['A', 'D', 'E'], minerals: [] },
+                { name: 'Avocado', protein: 3, carbs: 9, fats: 21, calories: 240, vitamins: ['K', 'C', 'E'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Nuts Mix', protein: 15, carbs: 27, fats: 43, calories: 570, vitamins: ['E', 'B1'], minerals: ['Magnesium', 'Manganese'] },
+                { name: 'Sunflower Oil', protein: 0, carbs: 0, fats: 100, calories: 884, vitamins: ['E'], minerals: [] },
+                { name: 'Sesame Oil', protein: 0, carbs: 0, fats: 100, calories: 884, vitamins: ['E'], minerals: [] },
+                { name: 'Peanut Oil', protein: 0, carbs: 0, fats: 100, calories: 884, vitamins: ['E'], minerals: [] },
+                { name: 'Flaxseed', protein: 18, carbs: 29, fats: 42, calories: 534, vitamins: [], minerals: ['Manganese', 'Magnesium'] },
+                { name: 'Chia Seeds', protein: 12, carbs: 42, fats: 31, calories: 486, vitamins: [], minerals: ['Manganese', 'Magnesium', 'Phosphorus'] },
+                { name: 'Walnuts', protein: 9, carbs: 11.1, fats: 65.2, calories: 654, vitamins: [], minerals: ['Copper', 'Manganese'] },
+                { name: 'Macadamia', protein: 7.9, carbs: 13.8, fats: 75.8, calories: 718, vitamins: [], minerals: ['Manganese', 'Copper'] },
+                { name: 'Dark Chocolate', protein: 12, carbs: 46, fats: 43, calories: 598, vitamins: ['Iron'], minerals: ['Copper', 'Manganese'] },
+                { name: 'Tahini', protein: 17, carbs: 21, fats: 53, calories: 595, vitamins: ['B1'], minerals: ['Copper', 'Magnesium', 'Zinc'] },
+                { name: 'Ghee', protein: 0.3, carbs: 0.1, fats: 62, calories: 562, vitamins: ['A', 'D', 'E'], minerals: [] }
+            ],
+            fruits: [
+                { name: 'Apple', protein: 0.3, carbs: 25, fats: 0.2, calories: 95, vitamins: ['C', 'K', 'B6'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Orange', protein: 0.7, carbs: 15, fats: 0.1, calories: 62, vitamins: ['C', 'Folate'], minerals: ['Potassium'] },
+                { name: 'Banana', protein: 1.1, carbs: 23, fats: 0.3, calories: 89, vitamins: ['B6', 'C'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Mango', protein: 0.8, carbs: 25, fats: 0.3, calories: 60, vitamins: ['C', 'A', 'K'], minerals: ['Copper', 'Potassium'] },
+                { name: 'Papaya', protein: 0.6, carbs: 11, fats: 0.3, calories: 43, vitamins: ['C', 'A'], minerals: ['Potassium', 'Copper'] },
+                { name: 'Pineapple', protein: 0.5, carbs: 13.1, fats: 0.1, calories: 50, vitamins: ['C', 'B6'], minerals: ['Copper', 'Manganese'] },
+                { name: 'Strawberry', protein: 0.8, carbs: 7.7, fats: 0.3, calories: 32, vitamins: ['C', 'Folate'], minerals: ['Manganese', 'Copper'] },
+                { name: 'Blueberry', protein: 0.7, carbs: 14, fats: 0.3, calories: 57, vitamins: ['C', 'K'], minerals: ['Manganese', 'Copper'] },
+                { name: 'Watermelon', protein: 0.6, carbs: 12, fats: 0.2, calories: 30, vitamins: ['C', 'A'], minerals: ['Potassium', 'Magnesium'] },
+                { name: 'Grape', protein: 0.6, carbs: 17, fats: 0.2, calories: 69, vitamins: ['C', 'K'], minerals: ['Copper', 'Manganese'] },
+                { name: 'Lemon', protein: 1.5, carbs: 11.6, fats: 0.3, calories: 29, vitamins: ['C'], minerals: ['Potassium'] },
+                { name: 'Lime', protein: 0.7, carbs: 11, fats: 0.2, calories: 30, vitamins: ['C'], minerals: ['Potassium'] },
+                { name: 'Kiwi', protein: 1.1, carbs: 14.7, fats: 0.5, calories: 61, vitamins: ['C', 'K', 'E'], minerals: ['Copper', 'Potassium'] },
+                { name: 'Passion Fruit', protein: 2.2, carbs: 23.4, fats: 0.7, calories: 97, vitamins: ['C', 'A'], minerals: ['Copper', 'Magnesium'] },
+                { name: 'Guava', protein: 2.6, carbs: 14, fats: 0.9, calories: 68, vitamins: ['C', 'A'], minerals: ['Copper', 'Manganese'] }
+            ],
+            vegetables: [
+                { name: 'Spinach', protein: 2.7, carbs: 3.6, fats: 0.4, calories: 23, vitamins: ['K', 'A', 'Folate'], minerals: ['Iron', 'Magnesium', 'Manganese'] },
+                { name: 'Broccoli', protein: 2.8, carbs: 7, fats: 0.4, calories: 34, vitamins: ['C', 'K', 'Folate'], minerals: ['Chromium', 'Manganese'] },
+                { name: 'Carrot', protein: 0.9, carbs: 10, fats: 0.2, calories: 41, vitamins: ['A', 'K', 'C'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Tomato', protein: 0.9, carbs: 3.9, fats: 0.2, calories: 18, vitamins: ['C', 'K', 'Folate'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Cucumber', protein: 0.7, carbs: 3.6, fats: 0.1, calories: 15, vitamins: ['K', 'C'], minerals: ['Potassium', 'Manganese'] },
+                { name: 'Lettuce', protein: 1.2, carbs: 2.9, fats: 0.2, calories: 15, vitamins: ['K', 'A', 'Folate'], minerals: ['Iron', 'Manganese'] },
+                { name: 'Bell Pepper', protein: 1, carbs: 6, fats: 0.3, calories: 31, vitamins: ['C', 'A', 'K'], minerals: ['Manganese'] },
+                { name: 'Garlic', protein: 0.6, carbs: 7, fats: 0.5, calories: 31, vitamins: ['C', 'B6'], minerals: ['Manganese', 'Selenium'] },
+                { name: 'Onion', protein: 1.1, carbs: 9, fats: 0.1, calories: 40, vitamins: ['C', 'B6'], minerals: ['Manganese', 'Chromium'] },
+                { name: 'Kale', protein: 3.3, carbs: 7.2, fats: 0.9, calories: 49, vitamins: ['K', 'A', 'C'], minerals: ['Iron', 'Calcium', 'Manganese'] },
+                { name: 'Cauliflower', protein: 1.9, carbs: 5, fats: 0.3, calories: 25, vitamins: ['C', 'K', 'Folate'], minerals: ['Manganese'] },
+                { name: 'Cabbage', protein: 1.3, carbs: 5.2, fats: 0.1, calories: 25, vitamins: ['C', 'K', 'Folate'], minerals: ['Manganese'] },
+                { name: 'Zucchini', protein: 0.6, carbs: 3.3, fats: 0.4, calories: 17, vitamins: ['C', 'A'], minerals: ['Manganese', 'Potassium'] },
+                { name: 'Okra', protein: 1.9, carbs: 7.5, fats: 0.2, calories: 33, vitamins: ['C', 'K', 'Folate'], minerals: ['Manganese', 'Magnesium'] },
+                { name: 'Eggplant', protein: 0.8, carbs: 5.2, fats: 0.2, calories: 25, vitamins: ['K', 'C'], minerals: ['Manganese', 'Copper'] }
+            ]
+        };
+
+        // ============ SYMPTOMS & FOOD RECOMMENDATIONS ============
+        const symptomFoodMap = {
+            'headache': {
+                foods: ['Banana', 'Watermelon', 'Almonds', 'Salmon', 'Spinach'],
+                doctors: ['Neurologist', 'General Practitioner', 'Cardiologist'],
+                tips: ['Drink plenty of water', 'Avoid skipping meals', 'Limit caffeine intake', 'Get adequate magnesium']
+            },
+            'fatigue': {
+                foods: ['Beef', 'Chicken', 'Eggs', 'Lentils', 'Orange', 'Banana'],
+                doctors: ['General Practitioner', 'Nutritionist', 'Cardiologist'],
+                tips: ['Ensure adequate protein intake', 'Check iron levels', 'Get proper sleep', 'Exercise regularly']
+            },
+            'joint pain': {
+                foods: ['Salmon', 'Almonds', 'Olive Oil', 'Broccoli', 'Turmeric'],
+                doctors: ['Rheumatologist', 'Orthopedist', 'Physical Therapist'],
+                tips: ['Include omega-3 fatty acids', 'Maintain healthy weight', 'Stay hydrated', 'Regular gentle exercise']
+            },
+            'digestive issues': {
+                foods: ['Banana', 'Papaya', 'Lentils', 'Oats', 'Ginger', 'Sweet Potato'],
+                doctors: ['Gastroenterologist', 'Nutritionist', 'General Practitioner'],
+                tips: ['Eat slowly and chew well', 'Increase fiber gradually', 'Stay hydrated', 'Avoid processed foods']
+            },
+            'high blood pressure': {
+                foods: ['Banana', 'Spinach', 'Salmon', 'Almonds', 'Garlic', 'Dark Chocolate'],
+                doctors: ['Cardiologist', 'General Practitioner', 'Nutritionist'],
+                tips: ['Reduce sodium intake', 'Eat potassium-rich foods', 'Regular exercise', 'Manage stress']
+            },
+            'anemia': {
+                foods: ['Beef Liver', 'Spinach', 'Lentils', 'Red Beans', 'Orange'],
+                doctors: ['Hematologist', 'General Practitioner', 'Nutritionist'],
+                tips: ['Increase iron intake', 'Combine with vitamin C for absorption', 'Avoid excessive tea/coffee', 'Get regular blood tests']
+            },
+            'weak immunity': {
+                foods: ['Orange', 'Kiwi', 'Garlic', 'Broccoli', 'Almonds', 'Salmon'],
+                doctors: ['Immunologist', 'General Practitioner', 'Nutritionist'],
+                tips: ['Get adequate vitamin C', 'Ensure proper sleep', 'Regular exercise', 'Manage stress levels']
+            },
+            'weight gain': {
+                foods: ['Broccoli', 'Salmon', 'Lentils', 'Almonds', 'Spinach', 'Apple'],
+                doctors: ['Nutritionist', 'General Practitioner', 'Endocrinologist'],
+                tips: ['Eat whole foods', 'Control portion sizes', 'Regular exercise', 'Reduce processed foods']
+            }
+        };
+
+        const doctors = {
+            'Neurologist': 'Specializes in nervous system and brain health',
+            'Gastroenterologist': 'Specializes in digestive system health',
+            'Cardiologist': 'Specializes in heart and cardiovascular health',
+            'Rheumatologist': 'Specializes in joint and autoimmune diseases',
+            'Orthopedist': 'Specializes in bones and muscles',
+            'General Practitioner': 'Provides general medical care',
+            'Nutritionist': 'Specializes in diet and nutrition counseling',
+            'Hematologist': 'Specializes in blood disorders',
+            'Immunologist': 'Specializes in immune system',
+            'Endocrinologist': 'Specializes in hormones and metabolism',
+            'Physical Therapist': 'Specializes in physical rehabilitation'
+        };
+
+        // ============ UI FUNCTIONS ============
+        function switchTab(tab) {
+            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ============ MACROS CALCULATOR ============
+        function calculateMacros() {
+            const age = parseFloat(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            if (!age || !gender || !weight || !height || !activity || !goal) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Calculate BMR
+            let bmr;
+            if (gender === 'male') {
+                bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else {
+                bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+
+            // Calculate TDEE
+            let tdee = bmr * activity;
+
+            // Adjust for goal
+            if (goal === 'lose') {
+                tdee = tdee - 500; // 500 calorie deficit
+            } else if (goal === 'gain') {
+                tdee = tdee + 500; // 500 calorie surplus
+            }
+
+            // Calculate macros
+            const protein = weight * 1.6; // 1.6g per kg
+            const proteinCals = protein * 4;
+            const fatCals = tdee * 0.25; // 25% from fats
+            const fats = fatCals / 9;
+            const carbCals = tdee - proteinCals - fatCals;
+            const carbs = carbCals / 4;
+
+            displayMacroResults({
+                tdee: Math.round(tdee),
+                protein: protein.toFixed(1),
+                carbs: carbs.toFixed(1),
+                fats: fats.toFixed(1)
+            });
+        }
+
+        function displayMacroResults(data) {
+            const resultsDiv = document.getElementById('macroResults');
+            
+            const chartHTML = `
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Protein</span>
+                        <span>${data.protein}g (${((data.protein * 4 / data.tdee) * 100).toFixed(0)}%)</span>
+                    </div>
+                    <div class="chart-fill" style="width: ${(data.protein * 4 / data.tdee) * 100}%">
+                        ${Math.round(data.protein * 4)} cal
+                    </div>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Carbohydrates</span>
+                        <span>${data.carbs}g (${((data.carbs * 4 / data.tdee) * 100).toFixed(0)}%)</span>
+                    </div>
+                    <div class="chart-fill" style="width: ${(data.carbs * 4 / data.tdee) * 100}%">
+                        ${Math.round(data.carbs * 4)} cal
+                    </div>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-label">
+                        <span>Fats</span>
+                        <span>${data.fats}g (${((data.fats * 9 / data.tdee) * 100).toFixed(0)}%)</span>
+                    </div>
+                    <div class="chart-fill" style="width: ${(data.fats * 9 / data.tdee) * 100}%">
+                        ${Math.round(data.fats * 9)} cal
+                    </div>
+                </div>
+            `;
+
+            document.querySelector('.macro-chart').innerHTML = chartHTML;
+
+            const macroCards = `
+                <div class="nutrient-card">
+                    <h4>Daily Calories</h4>
+                    <div class="value">${data.tdee}</div>
+                    <div class="unit">kcal</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Protein</h4>
+                    <div class="value">${data.protein}</div>
+                    <div class="unit">grams</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Carbohydrates</h4>
+                    <div class="value">${data.carbs}</div>
+                    <div class="unit">grams</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Fats</h4>
+                    <div class="value">${data.fats}</div>
+                    <div class="unit">grams</div>
+                </div>
+            `;
+
+            document.getElementById('macroCards').innerHTML = macroCards;
+
+            const vitaminsCards = `
+                <div class="nutrient-card">
+                    <h4>Vitamin A</h4>
+                    <div class="value">700-900</div>
+                    <div class="unit">mcg daily</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Vitamin C</h4>
+                    <div class="value">75-90</div>
+                    <div class="unit">mg daily</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Vitamin D</h4>
+                    <div class="value">600-800</div>
+                    <div class="unit">IU daily</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Iron</h4>
+                    <div class="value">8-18</div>
+                    <div class="unit">mg daily</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Calcium</h4>
+                    <div class="value">1000-1200</div>
+                    <div class="unit">mg daily</div>
+                </div>
+                <div class="nutrient-card">
+                    <h4>Magnesium</h4>
+                    <div class="value">310-420</div>
+                    <div class="unit">mg daily</div>
+                </div>
+            `;
+
+            document.getElementById('vitaminsCards').innerHTML = vitaminsCards;
+            resultsDiv.classList.add('show');
+
+            generateQRCode('macro', data);
+        }
+
+        function resetMacros() {
+            document.getElementById('age').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('weight').value = '';
+            document.getElementById('height').value = '';
+            document.getElementById('activity').value = '';
+            document.getElementById('goal').value = '';
+            document.getElementById('macroResults').classList.remove('show');
+        }
+
+        // ============ FOOD DATABASE FUNCTIONS ============
+        function updateFoodList() {
+            const category = document.getElementById('foodCategory').value;
+            if (!category) return;
+
+            const foods = foodDatabase[category];
+            displayFoods(foods);
+        }
+
+        function displayFoods(foods) {
+            const foodList = document.getElementById('foodList');
+            foodList.innerHTML = foods.map(food => `
+                <div class="food-item" onclick="toggleFood(this, '${food.name}')">
+                    <h4>${food.name}</h4>
+                    <p>Protein: ${food.protein}g</p>
+                    <p>Carbs: ${food.carbs}g</p>
+                    <p>Fats: ${food.fats}g</p>
+                    <p>${food.calories} cal/100g</p>
+                </div>
+            `).join('');
+        }
+
+        function filterFoods() {
+            const search = document.getElementById('foodSearch').value.toLowerCase();
+            const category = document.getElementById('foodCategory').value;
+            if (!category) return;
+
+            const filtered = foodDatabase[category].filter(f => 
+                f.name.toLowerCase().includes(search)
+            );
+            displayFoods(filtered);
+        }
+
+        function toggleFood(element, foodName) {
+            element.classList.toggle('selected');
+        }
+
+        function analyzeMeal() {
+            const input = document.getElementById('selectedFoodsInput').value;
+            if (!input) {
+                alert('Please enter foods and portions');
+                return;
+            }
+
+            // Parse input
+            const lines = input.split('\n');
+            let totalProtein = 0, totalCarbs = 0, totalFats = 0, totalCalories = 0;
+            const foodsUsed = [];
+
+            for (const line of lines) {
+                const parts = line.split('-');
+                if (parts.length !== 2) continue;
+
+                const foodName = parts[0].trim();
+                const grams = parseFloat(parts[1].trim());
+
+                // Find food in database
+                let found = false;
+                for (const category in foodDatabase) {
+                    const food = foodDatabase[category].find(f => f.name.toLowerCase() === foodName.toLowerCase());
+                    if (food) {
+                        const multiplier = grams / 100;
+                        totalProtein += food.protein * multiplier;
+                        totalCarbs += food.carbs * multiplier;
+                        totalFats += food.fats * multiplier;
+                        totalCalories += food.calories * multiplier;
+                        foodsUsed.push({ name: foodName, grams, food });
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    alert(`Food "${foodName}" not found in database`);
+                }
+            }
+
+            displayMealResults({
+                protein: totalProtein.toFixed(1),
+                carbs: totalCarbs.toFixed(1),
+                fats: totalFats.toFixed(1),
+                calories: totalCalories.toFixed(0),
+                foods: foodsUsed
+            });
+        }
+
+        function displayMealResults(data) {
+            const resultsDiv = document.getElementById('mealResults');
+            const analysis = `
+                <div class="nutrients-grid">
+                    <div class="nutrient-card">
+                        <h4>Total Calories</h4>
+                        <div class="value">${data.calories}</div>
+                        <div class="unit">kcal</div>
+                    </div>
+                    <div class="nutrient-card">
+                        <h4>Protein</h4>
+                        <div class="value">${data.protein}</div>
+                        <div class="unit">grams</div>
+                    </div>
+                    <div class="nutrient-card">
+                        <h4>Carbohydrates</h4>
+                        <div class="value">${data.carbs}</div>
+                        <div class="unit">grams</div>
+                    </div>
+                    <div class="nutrient-card">
+                        <h4>Fats</h4>
+                        <div class="value">${data.fats}</div>
+                        <div class="unit">grams</div>
+                    </div>
+                </div>
+
+                <h3>Foods Analyzed</h3>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    ${data.foods.map(f => `
+                        <div style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                            <strong>${f.name}</strong> - ${f.grams}g
+                            <div style="font-size: 12px; color: #999;">
+                                P: ${(f.food.protein * f.grams / 100).toFixed(1)}g | 
+                                C: ${(f.food.carbs * f.grams / 100).toFixed(1)}g | 
+                                F: ${(f.food.fats * f.grams / 100).toFixed(1)}g
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('mealAnalysis').innerHTML = analysis;
+            resultsDiv.classList.add('show');
+
+            generateQRCode('meal', data);
+        }
+
+        function clearFoods() {
+            document.getElementById('selectedFoodsInput').value = '';
+            document.getElementById('mealResults').classList.remove('show');
+        }
+
+        // ============ SYMPTOMS ANALYZER ============
+        function analyzeSymptons() {
+            const symptoms = document.getElementById('symptomsInput').value.toLowerCase();
+            if (!symptoms) {
+                alert('Please enter your symptoms');
+                return;
+            }
+
+            let matchedSymptom = null;
+            for (const key in symptomFoodMap) {
+                if (symptoms.includes(key)) {
+                    matchedSymptom = key;
+                    break;
+                }
+            }
+
+            if (!matchedSymptom) {
+                alert('Symptom not in database. Try: headache, fatigue, joint pain, digestive issues, high blood pressure, anemia, weak immunity, weight gain');
+                return;
+            }
+
+            const recommendation = symptomFoodMap[matchedSymptom];
+            displaySymptomResults(matchedSymptom, recommendation);
+        }
+
+        function displaySymptomResults(symptom, rec) {
+            const resultsDiv = document.getElementById('symptomResults');
+
+            const summary = `
+                <div style="padding: 15px; background: white; border-radius: 8px;">
+                    <h4>Symptom Reported: <strong>${symptom}</strong></h4>
+                    <p style="margin-top: 10px; font-size: 14px;">
+                        Based on your symptoms, we recommend the following foods and specialists.
+                        <br><strong>Note:</strong> This is for informational purposes only. Please consult a healthcare provider for proper diagnosis.
+                    </p>
+                </div>
+            `;
+
+            document.getElementById('symptomSummary').innerHTML = summary;
+
+            const foodsHTML = rec.foods.map(f => {
+                let food = null;
+                for (const category in foodDatabase) {
+                    food = foodDatabase[category].find(fd => fd.name === f);
+                    if (food) break;
+                }
+                return `
+                    <div class="food-item">
+                        <h4>${f}</h4>
+                        <p>Protein: ${food.protein}g</p>
+                        <p>Benefits: ${food.vitamins.join(', ')}</p>
+                        <p>${food.calories} cal</p>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('recommendedFoods').innerHTML = foodsHTML;
+
+            const doctorsHTML = rec.doctors.map(d => `
+                <div class="doctor-card">
+                    <h4>👨‍⚕️ ${d}</h4>
+                    <p>${doctors[d]}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('doctorsList').innerHTML = doctorsHTML;
+
+            const tipsHTML = rec.tips.map(tip => `<li>${tip}</li>`).join('');
+            document.getElementById('healthTips').innerHTML = tipsHTML;
+
+            resultsDiv.classList.add('show');
+
+            generateQRCode('health', { symptom, recommendations: rec });
+        }
+
+        function resetSymptoms() {
+            document.getElementById('symptomsInput').value = '';
+            document.getElementById('notesInput').value = '';
+            document.getElementById('symptomResults').classList.remove('show');
+        }
+
+        // ============ QR CODE GENERATION ============
+        function generateQRCode(type, data) {
+            let qrcodeDiv, url;
+
+            if (type === 'macro') {
+                qrcodeDiv = 'qrcode';
+                url = `NutriFlow - My Daily Nutrition: ${data.protein}g Protein, ${data.carbs}g Carbs, ${data.fats}g Fats, ${data.tdee} cal`;
+            } else if (type === 'meal') {
+                qrcodeDiv = 'mealQrcode';
+                url = `NutriFlow Meal: ${data.calories} cal, ${data.protein}g protein, ${data.carbs}g carbs`;
+            } else if (type === 'health') {
+                qrcodeDiv = 'healthQrcode';
+                url = `NutriFlow Health - Symptom: ${data.symptom}. Visit: www.nutriflow.com`;
+            }
+
+            document.getElementById(qrcodeDiv).innerHTML = '';
+            new QRCode(document.getElementById(qrcodeDiv), url);
+        }
+
+        // ============ SHARE FUNCTIONS ============
+        function shareOnFacebook() {
+            const text = 'Check out my nutrition plan on NutriFlow! 🥗';
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=nutriflow.com&quote=${text}`);
+        }
+
+        function shareOnTwitter() {
+            const text = 'Just calculated my daily nutrition needs with NutriFlow! 🥗 Check it out!';
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=nutriflow.com`);
+        }
+
+        function shareOnWhatsApp() {
+            const text = 'Check out NutriFlow - a comprehensive nutrition calculator! 🥗';
+            window.open(`https://wa.me/?text=${text} nutriflow.com`);
+        }
+
+        function shareViaEmail() {
+            const subject = 'Check out NutriFlow - Nutrition Calculator';
+            const body = 'I found this amazing nutrition calculator that helped me plan my diet. Visit: nutriflow.com';
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function shareMealOnFacebook() {
+            const text = 'Check out my meal analysis on NutriFlow! 🍽️';
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=nutriflow.com&quote=${text}`);
+        }
+
+        function shareMealOnTwitter() {
+            const text = 'Just analyzed my meal nutrition with NutriFlow! 🍽️';
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=nutriflow.com`);
+        }
+
+        function shareMealOnWhatsApp() {
+            const text = 'Check out my meal breakdown on NutriFlow! 🍽️';
+            window.open(`https://wa.me/?text=${text} nutriflow.com`);
+        }
+
+        function shareMealViaEmail() {
+            const subject = 'My Meal Analysis - NutriFlow';
+            const body = 'Check out my meal nutrition breakdown. Visit: nutriflow.com';
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function shareHealthOnFacebook() {
+            const text = 'Getting personalized health recommendations on NutriFlow! 🏥';
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=nutriflow.com&quote=${text}`);
+        }
+
+        function shareHealthOnTwitter() {
+            const text = 'NutriFlow helped me get personalized health recommendations! 🏥';
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=nutriflow.com`);
+        }
+
+        function shareHealthOnWhatsApp() {
+            const text = 'Check out the health recommendations I got from NutriFlow! 🏥';
+            window.open(`https://wa.me/?text=${text} nutriflow.com`);
+        }
+
+        function shareHealthViaEmail() {
+            const subject = 'My Health Recommendations - NutriFlow';
+            const body = 'I got personalized health recommendations on NutriFlow. Visit: nutriflow.com';
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>
